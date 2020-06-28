@@ -19,6 +19,17 @@ This simple use case showcases many interesting and distinctive aspects of NuCyp
   - The Listener never interacts with Creator or the Heart Monitor:
   he only needs the encrypted data and some policy metadata.
 
+## FLow
+- Creator signs up on our platform with her email and password, her password becomes her passphrase(plaintext or hash anything).
+- She can configures a policy without any receiver and uses it's policy pub key to encrypt her track.
+- Creator makes contract call to let smart contract know about policy (pass policypubkey).
+- A listener sign up on our platform with email, when he does that we generate a keyPair for him (two pub keys, two priv keys) and create a tuple in which we store those keys with his email or hash of email to identify him later.
+- A listener will make a smart contract method call to pay the amount associated with that track. When he does that we emit an event with his address which our platform listens to. Upon succesful payment alice will grant him access through policy to nuCypher network.
+- After that policy info will be shown on the dashboard to listener.
+- Listener object will be created with both his private keys. Listener then joins policy from the info shown in dashboard. 
+- Listener gets encrypted data from Enrico using policy pubkey and policy pubkey stamp.
+- Listener retrieves re-encrypted data from nuCypher and then decryptes it using his own private key.
+
 ### How to run the demo 
 Assuming you already have `nucypher` installed and a local demo fleet of Ursulas deployed (if not checkout this https://docs.nucypher.com/en/latest/demos/local_fleet_demo.html),
 running the demo only involves running the `creator.py` and `listener.py` scripts. You should run `creator.py` first:
