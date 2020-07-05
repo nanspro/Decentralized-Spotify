@@ -5,12 +5,14 @@ import msgpack
 from nucypher.characters.lawful import Enrico
 
 
-HEART_DATA_FILENAME = 'heart_data.msgpack'
+# HEART_DATA_FILENAME = 'track_data.msgpack'
 
-
-def generate_heart_rate_samples(policy_pubkey,
-                                samples: int = 500,
-                                save_as_file: bool = False):
+# Data Sources can produce encrypted data for access policies
+# that **don't exist yet**.
+# In this example, we create a local file with encrypted data
+def generate_track_samples(policy_pubkey,
+                                samples: int = 50,
+                                save_as_file: bool = True, HEART_DATA_FILENAME):
     data_source = Enrico(policy_encrypting_key=policy_pubkey)
 
     data_source_public_key = bytes(data_source.stamp)
