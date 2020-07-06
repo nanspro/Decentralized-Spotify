@@ -23,11 +23,10 @@ except IndexError:
 
 POLICY_FILENAME = "policy-metadata.json"
 
-ursula = Ursula.from_seed_and_stake_info(seed_uri=SEEDNODE_URI,
+def initialize_alice():
+    ursula = Ursula.from_seed_and_stake_info(seed_uri=SEEDNODE_URI,
                                          federated_only=True,
                                          minimum_stake=0)
-
-def initialize_alice():
     TEMP_ALICE_DIR = os.path.join('/', 'tmp', 'alice-tracks')
 
     # If anything fails, let's create Alicia from scratch

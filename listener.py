@@ -26,11 +26,11 @@ try:
 except IndexError:
     SEEDNODE_URI = "localhost:11500"
 
-ursula = Ursula.from_seed_and_stake_info(seed_uri=SEEDNODE_URI,
-                                         federated_only=True,
-                                         minimum_stake=0)
 
 def initialize_bob(bob_privkeys):
+    ursula = Ursula.from_seed_and_stake_info(seed_uri=SEEDNODE_URI,
+                                         federated_only=True,
+                                         minimum_stake=0)
     TEMP_DOCTOR_DIR = "{}/listener-files".format(os.path.dirname(os.path.abspath(__file__)))
 
     # Remove previous demo files and create new ones
