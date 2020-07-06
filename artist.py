@@ -72,6 +72,7 @@ def grant_access_policy(alicia, label, bob_pubkeys):
     Alicia creates a policy granting access to Bob.
     The policy is sent to the NuCypher network.
     '''
+    label = label.encode()
     # We create a view of the Bob who's going to be granted access.
     active_listener = Bob.from_public_keys(verifying_key=bob_pubkeys['sig'],
                                         encrypting_key=bob_pubkeys['enc'],
@@ -81,7 +82,7 @@ def grant_access_policy(alicia, label, bob_pubkeys):
     policy_end_datetime = maya.now() + datetime.timedelta(days=5)
     # m-out-of-n: This means Alicia splits the re-encryption key in 2 pieces and
     #              she requires Bob to seek collaboration of at least 1 Ursulas
-    m, n = 2, 3
+    m, n = 1, 2
 
     policy = alicia.grant(bob=active_listener,
                         label=label,
@@ -97,10 +98,11 @@ def save_policy_metadata(alicia, policy, label):
     For the demo, we need a way to share with Bob some additional info
     about the policy, so we store it in a JSON file
     '''
+
     policy_info = {
         "policy_pubkey": policy.public_key.to_bytes().hex(),
         "alice_sig_pubkey": bytes(alicia.stamp).hex(),
-        "label": label.decode("utf-8"),
+        "label": label,
     }
 
     filename = POLICY_FILENAME

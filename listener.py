@@ -86,22 +86,23 @@ def reencrypt_data(data_filepath, policy_filename, listener):
     alices_sig_pubkey = UmbralPublicKey.from_bytes(bytes.fromhex(policy_data["alice_sig_pubkey"]))
     label = policy_data["label"].encode()
     
-    track_encrypted_files = os.listdir(data_filepath)
+    track_encrypted_files = os.scandir(data_filepath)
     for track_segment_encrypted in track_encrypted_files:
+        if not track_segment_encrypted.name.endswith('_encrypted'):
+            continue
         with open(track_segment_encrypted, 'rb') as f:
             data = msgpack.load(f)
-        
-        ciphertext = data['track_segment_data']
 
+        message_kit = UmbralMessageKit.from_bytes(data[b'track_segment_data'])
         data_source = Enrico.from_public_keys(
-            verifying_key=data['data_source'],
+            verifying_key=data[b'data_source'],
             policy_encrypting_key=policy_pubkey
         )
         
         try:
             start = timer()
             retrieved_plaintexts = listener.retrieve(
-                ciphertext,
+                message_kit,
                 label=label,
                 enrico=data_source,
                 alice_verifying_key=alices_sig_pubkey
@@ -109,8 +110,8 @@ def reencrypt_data(data_filepath, policy_filename, listener):
             end = timer()
 
             plaintext = retrieved_plaintexts[0]
-            file_name = track_segment_encrypted[:-10]
-            
+            file_name = track_segment_encrypted.path[:-10] + "_decrypted.mp3"
+
             with open(file_name, 'wb') as f:
                 f.write(plaintext)
             
