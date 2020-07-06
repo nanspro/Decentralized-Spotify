@@ -1,7 +1,6 @@
 import json
 import traceback
 from timeit import default_timer as timer
-
 import maya
 import msgpack
 import os
@@ -118,3 +117,35 @@ def reencrypt_data(data_filepath, policy_filename, listener):
         except Exception as e:
             # We just want to know what went wrong and continue the demo
             traceback.print_exc()
+
+def reencrypt_segment(enc_data, policy_filename, listener):
+    with open(policy_filename, 'r') as f:
+        policy_data = json.load(f)
+
+    policy_pubkey = UmbralPublicKey.from_bytes(bytes.fromhex(policy_data["policy_pubkey"]))
+    alices_sig_pubkey = UmbralPublicKey.from_bytes(bytes.fromhex(policy_data["alice_sig_pubkey"]))
+    label = policy_data["label"].encode()
+    
+    data = msgpack.loads(enc_data)
+    message_kit = UmbralMessageKit.from_bytes((data[b'track_segment_data']))
+    data_source = Enrico.from_public_keys(
+        verifying_key=data[b'data_source'],
+        policy_encrypting_key=policy_pubkey
+    )
+    
+    try:
+        start = timer()
+        retrieved_plaintexts = listener.retrieve(
+            message_kit,
+            label=label,
+            enrico=data_source,
+            alice_verifying_key=alices_sig_pubkey
+        )
+        end = timer()
+
+        plaintext = retrieved_plaintexts[0]
+
+    except Exception as e:
+        # We just want to know what went wrong and continue the demo
+        traceback.print_exc()
+    return plaintext
