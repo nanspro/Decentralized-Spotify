@@ -27,8 +27,8 @@ if args.function == 'get_policy_pubkey':
 if args.function == 'encrypt_track_segments':
     track_encrypt.encrypt_track_segments(args.policypubkey, args.datapath)
 
-if args.function == 'get_listener_pubkeys':
-    bob_pubkey = listener_keys.get_listener_pubkeys()
+# if args.function == 'get_listener_pubkeys':
+#     bob_pubkey = listener_keys.get_listener_pubkeys()
 
 if args.function == 'grant_access_policy':
     policy = artist.grant_access_policy(args.alice, args.label, args.bobpubkeys)
@@ -36,14 +36,14 @@ if args.function == 'grant_access_policy':
 if args.function == 'save_policy_metadata':
     artist.save_policy_metadata(args.alice, args.policy, args.label)
 
-if args.function == 'get_listener_privkeys':
-    bob_private_keys = listener_keys.get_listener_privkeys()
+# if args.function == 'get_listener_privkeys':
+#     bob_private_keys = listener_keys.get_listener_privkeys()
 
-if args.function == 'initialize_bob':
-    listen_obj = listener.initialize_bob(args.bobprivkeys)
+# if args.function == 'initialize_bob':
+#     listen_obj = listener.initialize_bob(args.bobprivkeys)
 
-if args.function == 'join_policy':
-    listener.join_policy(args.bob, args.policydata)
+# if args.function == 'join_policy':
+#     listener.join_policy(args.bob, args.policydata)
 
 if args.function == 'reencrypt_data':
     listener.reencrypt_data(args.datapath, args.policydata, args.bob)
