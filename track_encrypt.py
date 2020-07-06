@@ -1,6 +1,5 @@
-import random
-import time
-import msgpack
+import os
+import json
 
 from nucypher.characters.lawful import Enrico
 
@@ -10,42 +9,28 @@ from nucypher.characters.lawful import Enrico
 # Data Sources can produce encrypted data for access policies
 # that **don't exist yet**.
 # In this example, we create a local file with encrypted data
-def generate_track_samples(policy_pubkey,
-                                samples: int = 50,
-                                save_as_file: bool = True, HEART_DATA_FILENAME):
+def encrypt_track_samples(policy_pubkey, path_file):
     data_source = Enrico(policy_encrypting_key=policy_pubkey)
 
     data_source_public_key = bytes(data_source.stamp)
 
-    heart_rate = 80
-    now = time.time()
+    track_files = os.listdir(path_file)
+    track_segments = list()
+    for file in track_files:
+        with open(file, "rb") as f:
+            plaintext = f.read()
 
-    kits = list()
-    for _ in range(samples):
-        # Simulated heart rate data
-        # Normal resting heart rate for adults: between 60 to 100 BPM
-        heart_rate = random.randint(max(60, heart_rate-5),
-                                    min(100, heart_rate+5))
-        now += 3
-
-        heart_rate_data = {
-            'heart_rate': heart_rate,
-            'timestamp': now,
-        }
-
-        plaintext = msgpack.dumps(heart_rate_data, use_bin_type=True)
-        message_kit, _signature = data_source.encrypt_message(plaintext)
-
-        kit_bytes = message_kit.to_bytes()
-        kits.append(kit_bytes)
-
+        ciphertext, signature = data_source.encrypt_message(plaintext)
+        track_segments.append(ciphertext)
+        print("Signature", signature)
+        with open(file + '_encrypted', "wb") as f:
+            f.write(ciphertext)
+    
     data = {
-        'data_source': data_source_public_key,
-        'kits': kits,
+        'track_segments': track_segments,
+        'data_source': data_source_public_key
     }
-
-    if save_as_file:
-        with open(HEART_DATA_FILENAME, "wb") as file:
-            msgpack.dump(data, file, use_bin_type=True)
+    with open('track_segments', "wb") as f:
+        f.write(data)
 
     return data

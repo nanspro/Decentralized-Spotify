@@ -73,7 +73,7 @@ def join_policy(listener, policy_filename):
     return label
 
 
-def reencrypt_data(data_filename, policy_filename):
+def reencrypt_data(data_filename, policy_filename, listener):
     '''
     Now that the listener joined the policy in the NuCypher network,
     he can retrieve encrypted data which he can decrypt with his private key.
@@ -86,8 +86,10 @@ def reencrypt_data(data_filename, policy_filename):
     alices_sig_pubkey = UmbralPublicKey.from_bytes(bytes.fromhex(policy_data["alice_sig_pubkey"]))
     label = policy_data["label"].encode()
 
-    data = msgpack.load(open(data_filename, "rb"), raw=False)
-    message_kits = (UmbralMessageKit.from_bytes(k) for k in data['kits'])
+    with open('track_segments', "r") as f:
+        data = f.read()
+    
+    # message_kits = (UmbralMessageKit.from_bytes(k) for k in data['kits'])
 
     # The listener also needs to create a view of the Data Source from policy public key
     data_source = Enrico.from_public_keys(
@@ -95,12 +97,17 @@ def reencrypt_data(data_filename, policy_filename):
         policy_encrypting_key=policy_pubkey
     )
 
-    # Now he can ask the NuCypher network to get a re-encrypted version of each MessageKit.
-    for message_kit in message_kits:
+    track_encrypted_files = os.listdir(data_filename)
+    
+    # Now he can ask the NuCypher network to get a re-encrypted version of each segment.
+    for file in track_encrypted_files:
+        with open(file, 'rb') as f:
+            ciphertext = f.read()
+        
         try:
             start = timer()
             retrieved_plaintexts = listener.retrieve(
-                message_kit,
+                ciphertext,
                 label=label,
                 enrico=data_source,
                 alice_verifying_key=alices_sig_pubkey
