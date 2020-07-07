@@ -1,0 +1,12 @@
+node_modules/
+*.swp
+*.swo
+*.swn
+.DS_Store*
+test.js
+scratch.js
+local-storage/
+.npmrc
+run.sh
+**/todo
+.vscode

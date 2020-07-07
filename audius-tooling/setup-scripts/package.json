@@ -1,0 +1,71 @@
+{
+  "name": "setup-scripts",
+  "version": "1.0.0",
+  "description": "Used to define dependencies used for local service set-up",
+  "main": "setupLocal.js",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "child_process": "^1.0.2",
+    "colors": "^1.4.0",
+    "convict": "^5.2.0",
+    "dotenv": "^8.2.0",
+    "path": "^0.12.7",
+    "standardjs": "^1.0.0-alpha"
+  },
+  "devDependencies": {
+    "mocha": "^7.1.1",
+    "standard": "^14.3.3"
+  },
+  "scripts": {
+    "fix": "standard --fix",
+    "style": "standard",
+    "test": "mocha --no-timeout",
+    "all-up": "node setupLocal.js all up",
+    "contracts-up": "node setupLocal.js contracts up",
+    "eth-contracts-up": "node setupLocal.js eth-contracts up",
+    "ipfs-up": "node setupLocal.js ipfs up",
+    "ipfs-2-up": "node setupLocal.js ipfs-2 up",
+    "ipfs-3-up": "node setupLocal.js ipfs-3 up",
+    "ipfs-4-up": "node setupLocal.js ipfs-4 up",
+    "init-contracts-info-up": "node setupLocal.js init-contracts-info up",
+    "init-token-versions-up": "node setupLocal.js init-token-versions up",
+    "discovery-provider-up": "node setupLocal.js discovery-provider up",
+    "creator-node-up": "node setupLocal.js creator-node up",
+    "creator-node-2-up": "node setupLocal.js creator-node-2 up",
+    "creator-node-3-up": "node setupLocal.js creator-node-3 up",
+    "creator-node-4-up": "node setupLocal.js creator-node-4 up",
+    "content-service-up": "node setupLocal.js content-service up",
+    "identity-service-up": "node setupLocal.js identity-service up",
+    "all-down": "node setupLocal.js all down",
+    "contracts-down": "node setupLocal.js contracts down",
+    "eth-contracts-down": "node setupLocal.js eth-contracts down",
+    "ipfs-down": "node setupLocal.js ipfs down",
+    "ipfs-2-down": "node setupLocal.js ipfs-2 down",
+    "ipfs-3-down": "node setupLocal.js ipfs-3 down",
+    "ipfs-4-down": "node setupLocal.js ipfs-4 down",
+    "discovery-provider-down": "node setupLocal.js discovery-provider down",
+    "creator-node-down": "node setupLocal.js creator-node down",
+    "creator-node-2-down": "node setupLocal.js creator-node-2 down",
+    "creator-node-3-down": "node setupLocal.js creator-node-3 down",
+    "creator-node-4-down": "node setupLocal.js creator-node-4 down",
+    "content-service-down": "node setupLocal.js content-service down",
+    "identity-service-down": "node setupLocal.js identity-service down",
+    "distribute": "node setupLocal.js distribute"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AudiusProject/audius-tooling.git"
+  },
+  "keywords": [
+    "setup",
+    "local",
+    "tooling",
+    "script"
+  ],
+  "author": "Vicky Guan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AudiusProject/audius-tooling/issues"
+  },
+  "homepage": "https://github.com/AudiusProject/audius-tooling#readme"
+}

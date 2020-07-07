@@ -1,0 +1,135 @@
+{
+  "all": {
+    "down": [
+      "docker stop $(docker ps -aq)",
+      "docker rm $(docker ps -aq)",
+      "docker container prune -f",
+      "docker volume prune -f",
+      "docker network prune -f"
+    ]
+  },
+  "contracts": {
+    "build": [
+      "cd contracts/; npm run ganache",
+      "echo 'Migrating contracts'",
+      "cd contracts/; node_modules/.bin/truffle migrate",
+      "echo 'Writing flask config'",
+      "cd contracts/; node_modules/.bin/truffle exec scripts/_contractsLocalSetup.js -run"
+    ],
+    "down": ["cd contracts/; npm run ganache-q"]
+  },
+  "eth-contracts": {
+    "path": "eth-contracts",
+    "build": [
+      "cd eth-contracts/; npm run ganache",
+      "echo 'Migrating eth contracts'",
+      "cd eth-contracts/; node_modules/.bin/truffle migrate"
+    ],
+    "down": ["cd eth-contracts/; npm run ganache-q"]
+  },
+  "ipfs": {
+    "build": ["libs/scripts/ipfs.sh up local-ipfs-node"],
+    "down": ["libs/scripts/ipfs.sh down local-ipfs-node"]
+  },
+  "ipfs-2": {
+    "build": ["libs/scripts/ipfs.sh up local-ipfs-node-2 6011 6012"],
+    "down": ["libs/scripts/ipfs.sh down local-ipfs-node-2"]
+  },
+  "ipfs-3": {
+    "build": ["libs/scripts/ipfs.sh up local-ipfs-node-3 6021 6022"],
+    "down": ["libs/scripts/ipfs.sh down local-ipfs-node-3"]
+  },
+  "ipfs-4": {
+    "build": ["libs/scripts/ipfs.sh up local-ipfs-node-4 6031 6032"],
+    "down": ["libs/scripts/ipfs.sh down local-ipfs-node-4"]
+  },
+  "init-contracts-info": {
+    "build": ["cd libs/; sh ./scripts/migrate_contracts.sh"]
+  },
+  "init-token-versions": {
+    "build": ["cd libs/; node initScripts/local.js init-all"]
+  },
+  "discovery-provider": {
+    "protocol": "http",
+    "host": "localhost",
+    "port": 5000,
+    "build": [
+      "docker-compose -f discovery-provider/docker-compose.base.yml -f discovery-provider/docker-compose.dev.yml up --build -d"
+    ],
+    "down": [
+      "docker-compose -f discovery-provider/docker-compose.base.yml -f discovery-provider/docker-compose.dev.yml down"
+    ],
+    "register": ["cd libs/; node initScripts/local.js register-discprov-1"]
+  },
+  "content-service": {
+    "protocol": "http",
+    "host": "localhost",
+    "port": 8432,
+    "build": [
+      "docker-compose -f content-service/docker-compose/docker-compose.full.yml up --build -d"
+    ],
+    "down": [
+      "docker-compose -f content-service/docker-compose/docker-compose.full.yml down"
+    ]
+  },
+  "creator-node": {
+    "protocol": "http",
+    "host": "localhost",
+    "port": 4000,
+    "build": [
+      "cd creator-node/; docker-compose -f docker-compose/docker-compose.full.override.yml up --build -d"
+    ],
+    "down": [
+      "cd creator-node/; docker-compose -f docker-compose/docker-compose.full.override.yml down --remove-orphans"
+    ],
+    "register": ["cd libs/; node initScripts/local.js register-cnode-1"]
+  },
+  "creator-node-2": {
+    "protocol": "http",
+    "host": "localhost",
+    "port": 4010,
+    "build": [
+      "cd creator-node/; docker-compose -f docker-compose/dev/docker-compose.full2.yml up --build -d"
+    ],
+    "down": [
+      "cd creator-node/; docker-compose -f docker-compose/dev/docker-compose.full2.yml down --remove-orphans"
+    ],
+    "register": ["cd libs/; node initScripts/local.js register-cnode-2"]
+  },
+  "creator-node-3": {
+    "protocol": "http",
+    "host": "localhost",
+    "port": 4020,
+    "build": [
+      "cd creator-node/; docker-compose -f docker-compose/dev/docker-compose.full3.yml up --build -d"
+    ],
+    "down": [
+      "cd creator-node/; docker-compose -f docker-compose/dev/docker-compose.full3.yml down"
+    ],
+    "register": ["cd libs/; node initScripts/local.js register-cnode-3"]
+  },
+  "creator-node-4": {
+    "protocol": "http",
+    "host": "localhost",
+    "port": 4030,
+    "build": [
+      "cd creator-node/; docker-compose -f docker-compose/dev/docker-compose.full4.yml up --build -d"
+    ],
+    "down": [
+      "cd creator-node/; docker-compose -f docker-compose/dev/docker-compose.full4.yml down"
+    ],
+    "register": ["cd libs/; node initScripts/local.js register-cnode-4"]
+  },
+  "identity-service": {
+    "protocol": "http",
+    "host": "localhost",
+    "port": 7000,
+    "build": [
+      "cd identity-service/; docker-compose -f docker-compose/docker-compose.full.yml up --build -d"
+    ],
+    "down": [
+      "cd identity-service/; docker-compose -f docker-compose/docker-compose.full.yml down"
+    ]
+  },
+  "distribute": ["node libs/initScripts/local.js distribute"]
+}
