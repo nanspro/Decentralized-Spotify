@@ -83,6 +83,15 @@ let trackMetadata = {
 // Init Bob will happen automatically when the standalone server is up
 
 // Check payment???
+(async function () {
+  let url = "https://127.0.0.1:5011/api/v1/payments/0x795C0c7716EEcd8A4D346247C962fC6899Dc2d46/0xAF06950aa322877B640d9533163a19C739DA1a1D";
+
+  console.log("Fetching payments history to hub from target");
+  const res = await fetch(url, { method: 'GET', headers: {'Content-Type': 'application/json'}});
+  const data = res.json();
+  console.log("Payment has been verified");
+
+})();
 
 // Grant access policy
 
