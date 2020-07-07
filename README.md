@@ -1,67 +1,37 @@
-# NuCypher's Heartbeat Demo
+# Audius-NuCypher
 
 ![Heartbeat Demo](https://user-images.githubusercontent.com/2564234/49080419-dda35680-f243-11e8-90d7-6f649d80e03d.png)
 
-Creator encrypts it's tracks and then upload them in encrypted form. Creator creates a policy before encrypting and uploading data. That policy is track specific. Since creator might want to allow listeners access to her music, she creates this policy without knowing any listener.
-Policy Pubkey is used while encrypting and uploading the data.
+Audius gives everyone the freedom to share, monetize, and listen to any audio content. It is a fully decentralized community of artists, developers, and listeners collaborating to share and defend the world’s music.
 
-Now when she wants to share this info with others, she would reuire buyers/listeners public key so that she can grant access to them. Once she gets it she'd create a policy granting access and after that listener can obtain that data in encrypted form from Enrico. Listener would then request nuCypher to re-encrypt the data so he can decrypt it with his private key. (Note that listener can't decrypt the data directly without re-encrypting it first).
+We integrated nuCypher with audius protocol and added raiden network on top of them as payment layer. Integrating nuCypher with audius helps in uploading encrypted songs to ipfs and then decrypting them only once the users have paid for it. Payments are gonna be off chain and will be handled by raiden network.
 
-This simple use case showcases many interesting and distinctive aspects of NuCypher:
-  - Creator can create policy public keys **before knowing** who will be the potential consumers.
-  - Creator, or anyone knowing the policy public key (e.g., the Heart Monitor),
-  can produce encrypted data that belongs to the policy. Again, this can happen before granting access to any consumer.
-  - As a consequence of the previous point, Data Sources, like the Heart Monitor,
-  are completely unaware of the recipients. In their mind, they are producing data **for Alicia**.
-  - Creator never interacts with the Listeners: she only needs the listener's public key.
-  - Creator only interacts with the NuCypher network for granting access to the Listener.
-  After this, she can even disappear from the face of the Earth.
-  - The Listener never interacts with Creator or the Heart Monitor:
-  he only needs the encrypted data and some policy metadata.
+## User Flow
 
-## FLow
-- Creator signs up on our platform with her email and password, her password becomes her passphrase(plaintext or hash anything).
-- She can configures a policy without any receiver and uses it's policy pub key to encrypt her track.
-- Creator makes contract call to let smart contract know about policy (pass policypubkey).
-- A listener sign up on our platform with email, when he does that we generate a keyPair for him (two pub keys, two priv keys) and create a tuple in which we store those keys with his email or hash of email to identify him later.
-- A listener will make a smart contract method call to pay the amount associated with that track. When he does that we emit an event with his address which our platform listens to. Upon succesful payment alice will grant him access through policy to nuCypher network.
-- After that policy info will be shown on the dashboard to listener.
-- Listener object will be created with both his private keys. Listener then joins policy from the info shown in dashboard. 
-- Listener gets encrypted data from Enrico using policy pubkey and policy pubkey stamp.
-- Listener retrieves re-encrypted data from nuCypher and then decryptes it using his own private key.
+### Artists
+- Artists keys are generated when they sign up to audius and then they can use those keys to upload songs by providing some metadata like genre, track name, price etc.
+- A track will be broken into segments and then each segment will be encrypted and then uploaded to ipfs. In audius we are using Postgres as persistent storage which will store track_segments hash into database.
+- Artists will create grant access policies to nuCypher, allowing them to access and decrypt the track
+- Artists will verify from raiden whether an successful payment has been made from listener to him for the given track.
 
-### How to run the demo 
-Assuming you already have `nucypher` installed and a local demo fleet of Ursulas deployed (if not checkout this https://docs.nucypher.com/en/latest/demos/local_fleet_demo.html),
-running the demo only involves running the `creator.py` and `listener.py` scripts. You should run `creator.py` first:
+### Listeners
+- A listener bob when interacting with audius will run a standalone server just like a creator runs a creator_node by himself. He'll also be running a raiden node locally to initiate payments and join channels.
+- Listener will have it's own private keys and pubkeys stored locally in his device. He will interact with his standalone server which talks to nuCypher and his raiden node.
+- Listener will see the tracks available and could pay for whatever he is interested in through raiden's webui. Once the payment is successful, he would be able to see the policy details on ui which was granted by the creator.
+- Listener will then join that policy and he'd get the decrypted data of the track from nuCypher.
+- Listener will be able to play the track on browser using HLS stream
 
-```sh
-(nucypher)$ python3 creator.py
-```
-This will create a temporal directory called `alice-tracks` that contains the data for making creator persistent
-(i.e., her private keys). Apart from that, it will also generate data and keys for the demo.
-What's left is running the `listener.py` script:
+## Using nuCypher
+Nucypher is being used here to encrypt the songs before storing them anywhere so that data can only be decrypted by the people who pay for it and no one other than buyers would be able to acces it. nuCypher's proxy re-encryption also helps in encrypting the data only once and then creating different grant policies for those who pay for that data. No need to encrypt the data again and again for every user.
 
-```sh
-(nucypher)$ python3 listener.py
-```
-This script will read the data generated in the previous step and retrieve re-encrypted ciphertexts via the NuCypher
-network. The result is printed in the console:
+The key management for now is done in a way that creators and listeners both run their own nodes to talk to nuCypher and audius and raiden and so their keys could be stored in their local machine itself.
 
-```
-Creating the Listener ...
-Listener =  ⇀Maroon Snowman DarkSlateGray Bishop↽ (0xA36bcd5c5Cfa0C1119ea5E53621720a0C1a610F5)
-The Listener joins policy for label 'track-datae917d959'
-----------------------❤︎ (82 BPM)                    Retrieval time:  3537.06 ms
----------------------❤︎ (81 BPM)                     Retrieval time:  2654.51 ms
--------------------------❤︎ (85 BPM)                 Retrieval time:  1513.32 ms
-----------------------------❤︎ (88 BPM)              Retrieval time:  1552.66 ms
------------------------❤︎ (83 BPM)                   Retrieval time:  1720.66 ms
----------------------❤︎ (81 BPM)                     Retrieval time:  1485.25 ms
----------------------❤︎ (81 BPM)                     Retrieval time:  1459.16 ms
----------------------❤︎ (81 BPM)                     Retrieval time:  1520.30 ms
-----------------❤︎ (76 BPM)                          Retrieval time:  1479.54 ms
-----------------❤︎ (76 BPM)                          Retrieval time:  1464.17 ms
----------------------❤︎ (81 BPM)                     Retrieval time:  1483.04 ms
-----------------❤︎ (76 BPM)                          Retrieval time:  1687.72 ms
----------------❤︎ (75 BPM)                           Retrieval time:  1563.65 ms
-```
+## Using Raiden
+Raiden Network is used here as a payment solution. Creators and Listeners run their own raiden nodes. Also one raiden node will be running as hub from audius team itself. Listeners and Artits both can then connect to central hub. Listeners can pay to artists directly through audius hub without creating any channel between them directly.
+
+Upon successful payment for a track to an artist, our creator node will query raiden events to verify whether payment was successful or not. If successful, it'll automatically create a grant access policy to the buyer.
+
+## How to run locally
+
+## Challenges we faced
+- Integrating anything with such a large existing app like audius could prove very difficult as we learned along the way. Integrating nuCYpher into the core of audius's cretor node turned to be very cumbersome but we did manage to write new routes and integrate it successfully however that didn't leave much time for us to setup a good ui for the project.
