@@ -209,6 +209,21 @@ function LibsWrapper(walletIndex = 0) {
     }
     return users[0]
   }
+
+    this.getUserbyhandle = async (handle) => {
+      assertLibsDidInit();
+      const users = await libsInstance.User.getUsers(
+        1 /* limit */,
+        0 /* offset */,
+        null,
+        null,
+        handle
+      );
+      if (!users.length) {
+        throw new Error("No users!");
+      }
+      return users[0];
+    };
 }
 
 module.exports = { LibsWrapper }

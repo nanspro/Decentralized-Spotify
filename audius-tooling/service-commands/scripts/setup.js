@@ -1,7 +1,7 @@
 const ServiceCommands = require('../src/index')
 const { allUp, Service, SetupCommand, runSetupCommand } = ServiceCommands
 
-const NUM_CREATOR_NODES = 4
+const NUM_CREATOR_NODES = 2
 
 /**
  * Temporary setup script for upping and downing all services.
