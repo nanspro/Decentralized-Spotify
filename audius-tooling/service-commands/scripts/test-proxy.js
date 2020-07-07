@@ -80,8 +80,37 @@ let trackMetadata = {
 
 })();
 
-// Init Bob
+// Init Bob will happen automatically when the standalone server is up
 
-// Payment + Access Grant
+// Check payment???
+
+// Grant access policy
 
 // Bob Join Policy
+(async function () {
+  let url = "https://127.0.0.1:9000/join";
+  let policy_metadata = {}
+  policy_metadata["policy_pubkey"] = '';
+  policy_metadata["alice_sig_pubkey"] = '';
+  policy_metadata["label"] = trackMetadata["title"];
+
+  console.log("Listener joining policy for track {}", policy_metadata["label"]);
+  const res = await fetch(url, { method: 'POST', body: JSON.stringify(policy_metadata), headers: {'Content-Type': 'application/json'}});
+  const data = res.json();
+  console.log("Policy {} Joined successfully", data);
+
+})();
+
+// Bob decrypt track segment
+(async function () {
+  let url = "https://127.0.0.1:9000/decrypt";
+  let req = {}
+  req["label"] = trackMetadata["title"];
+  req["ipfsHash"] = ''
+
+  console.log("Listener fetching track {}", req["ipfsHash"]);
+  const res = await fetch(url, { method: 'POST', body: JSON.stringify(req), headers: {'Content-Type': 'application/json'}});
+  const data = res.json();
+  console.log("Track fetched successfully", data);
+
+})();
