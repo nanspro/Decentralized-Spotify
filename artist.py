@@ -14,7 +14,7 @@ from nucypher.utilities.logging import GlobalLoggerSettings
 # from listener_keys import get_listener_pubkeys
 
 # Twisted Logger
-GlobalLoggerSettings.start_console_logging()
+# GlobalLoggerSettings.start_console_logging()
 
 try:
     SEEDNODE_URI = sys.argv[1]
@@ -22,6 +22,30 @@ except IndexError:
     SEEDNODE_URI = "localhost:11500"
 
 POLICY_FILENAME = "policy-metadata.json"
+passphrase = "TEST_ALICIA_INSECURE_DEVELOPMENT_PASSWORD"
+
+def get_alice():
+    ursula = Ursula.from_seed_and_stake_info(seed_uri=SEEDNODE_URI,
+                                         federated_only=True,
+                                         minimum_stake=0)
+    # A new Alice is restored from the configuration file
+    new_alice_config = AliceConfiguration.from_configuration_file(
+        filepath=os.path.join(TEMP_ALICE_DIR, 'alice.config.json'),
+        domains={TEMPORARY_DOMAIN},
+        known_nodes={ursula},
+        start_learning_now=False,
+        federated_only=True,
+        learn_on_same_thread=True,
+    )
+
+    # Alice unlocks her restored keyring from disk
+    new_alice_config.attach_keyring()
+    new_alice_config.keyring.unlock(password=passphrase)
+    new_alice = new_alice_config()
+    new_alice.start_learning_loop(now=True)
+
+    return new_alice
+
 
 def initialize_alice():
     ursula = Ursula.from_seed_and_stake_info(seed_uri=SEEDNODE_URI,
@@ -31,8 +55,8 @@ def initialize_alice():
 
     # If anything fails, let's create Alicia from scratch
     # Remove previous demo files and create new ones
-    shutil.rmtree(TEMP_ALICE_DIR, ignore_errors=True)
-    passphrase = "TEST_ALICIA_INSECURE_DEVELOPMENT_PASSWORD"
+    # shutil.rmtree(TEMP_ALICE_DIR, ignore_errors=True)
+    
     alice_config = AliceConfiguration(
         config_root=os.path.join(TEMP_ALICE_DIR),
         domains={TEMPORARY_DOMAIN},
@@ -47,6 +71,10 @@ def initialize_alice():
     
     # We will save Alicia's config to a file for later use
     alice_config_file = alice_config.to_configuration_file()
+    
+    with open(os.path.join(TEMP_ALICE_DIR, 'alice.config.json'), 'w') as f:
+        f.write(open(alice_config_file).read())
+    
     alicia = alice_config.produce()
     
     # Let's get to learn about the NuCypher network
@@ -59,6 +87,7 @@ def get_policy_pubkey(alicia, label):
     Alicia can create the public key associated to the policy label,
     even before creating any associated policy
     '''
+    alicia = get_alice()
     label = label.encode()
     policy_pubkey = alicia.get_policy_encrypting_key_from_label(label)
     print("The policy public key for "
@@ -66,11 +95,12 @@ def get_policy_pubkey(alicia, label):
     return policy_pubkey
 
 
-def grant_access_policy(alicia, label, bob_pubkeys):
+def grant_access_policy(label, bob_pubkeys):
     '''
     Alicia creates a policy granting access to Bob.
     The policy is sent to the NuCypher network.
     '''
+    alicia = get_alice()
     label = label.encode()
     # We create a view of the Bob who's going to be granted access.
     active_listener = Bob.from_public_keys(verifying_key=bob_pubkeys['sig'],
@@ -88,22 +118,8 @@ def grant_access_policy(alicia, label, bob_pubkeys):
                         m=m,
                         n=n,
                         expiration=policy_end_datetime)
-    print("Done!")
-    return policy
-
-
-def save_policy_metadata(alicia, policy, label):
-    '''
-    For the demo, we need a way to share with Bob some additional info
-    about the policy, so we store it in a JSON file
-    '''
-
-    policy_info = {
+    print({
         "policy_pubkey": policy.public_key.to_bytes().hex(),
         "alice_sig_pubkey": bytes(alicia.stamp).hex(),
         "label": label,
-    }
-
-    filename = POLICY_FILENAME
-    with open(filename, 'w') as f:
-        json.dump(policy_info, f)
+    })
