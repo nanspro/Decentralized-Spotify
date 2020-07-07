@@ -1,0 +1,3 @@
+[submodule "audius-protocol"]
+	path = audius-protocol
+	url = https://github.com/nemaniarjun/audius-protocol
