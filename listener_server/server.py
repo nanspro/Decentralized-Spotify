@@ -1,13 +1,11 @@
-import artist
 import listener
 import listener_keys
-import track_encrypt
 import ipfshttpclient
 from flask import request
 
 from flask import Flask
 app = Flask(__name__)
-api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001/http')
+api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/6001/http')
 
 LABEL_TO_POLICY = {}
 PUBKEYS = listener_keys.get_listener_pubkeys()

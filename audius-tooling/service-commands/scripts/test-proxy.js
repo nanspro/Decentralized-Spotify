@@ -18,7 +18,7 @@ let constants = {
   trackMetadataCID2: "QmSH5gJPHg9xLzV823ty8BSGyHNP6ty22bgLaaaaaaaaaa",
   creatorMetadataCID: "QmTDhoEDLE3k3CE5bu4mF1ogsEVkPwEAM41KsN7hZX1eWY",
   "0x0": "0x0000000000000000000000000000000000000000000000000000000000000000",
-  creatorNodeURL1: "http://cn1_creator-node_1:4000/",
+  creatorNodeURL1: "http://cn1_creator-node_1:4000",
   signatureData: "Click sign to authenticate with creator node:1543885912",
   signatureAddress: "0x7d267e2f8dc64c53267c56dab55bf7050566baec",
   signature:
@@ -28,10 +28,10 @@ let constants = {
 };
 
 let metadata = {
-  email: "nemaniarjun@gmail.com",
-  password: "nemaniarjun@gmail.com",
-  name: "CreatorName8649132",
-  handle: "handle9646472",
+  email: "nemaniarjun3@gmail.com",
+  password: "nemaniarjun3@gmail.com",
+  name: "NewCreator",
+  handle: "newhandl",
   profile_picture: null,
   profile_picture_sizes: null,
   cover_photo_sizes: null,
@@ -56,28 +56,28 @@ let trackMetadata = {
 };
 
 (async function () {
-  const myLibs = new LibsWrapper();
+  const myLibs = new LibsWrapper(0);
   await myLibs.initLibs();
-  let user;
 
-  // Create a new user
-  try {
-    user = await myLibs.getUserbyhandle(metadata.handle);
-    console.log("User already exisits");
+  // // await addUser(myLibs, metadata);
+  // // console.log("Init Done")
+  // await upgradeToCreator(myLibs, constants.creatorNodeURL1);
+  // console.log("upgraded to creator")
+  // await fetch(constants.creatorNodeURL1 + "/users/initAlice");
+  // // trackMetadata.owner_id = user.user_id
+  // let trackPath = '../../../src/test_tracks/001 - Bruno Mars - Locked Out Heaven.mp3';
+  // let trackUploaded = await uploadTrack(myLibs, trackMetadata, trackPath);
+  // console.log("Track Uploaded");
+  bobPublicKey = { "enc": "02ffb9da42dde6d8bcecadb96514d91cb8434d2fff7ac201b49f0770c5cda1f733", "sig": "024ce23b871a21b69b04fee3b9ba108a631a5a6657eb51791d55e260ce689850ee" }
+  obj = {
+    bobPublicKey,
+    trackId: 1
   }
-  catch{
-    let newUserId = await addUser(myLibs, metadata);
-    console.log("created new user!");
-    user = await myLibs.getUser(newUserId);
-  }
-  console.log(user);
-  
-  //  Init Alice on creator node
-  // fetch(constants.creatorNodeURL1 + "users/initAlice");
-  // trackMetadata.owner_id = user.user_id
-  let trackFile = fs.createReadStream('../../../src/test_tracks/001 - Bruno Mars - Locked Out Heaven.mp3');
-  let trackUploaded = await myLibs.uploadTrack({ trackFile, trackMetadata });
 
+  const res = await fetch(constants.creatorNodeURL1 + "/users/grantAccess", 
+    { method: 'POST', body: JSON.stringify(obj), headers: { 'Content-Type': 'application/json' } });
+  body = await res.json()
+  console.log(body);
 })();
 
 // Init Bob will happen automatically when the standalone server is up
@@ -94,32 +94,33 @@ let trackMetadata = {
 })();
 
 // Grant access policy
+  
 
-// Bob Join Policy
-(async function () {
-  let url = "https://127.0.0.1:9000/join";
-  let policy_metadata = {}
-  policy_metadata["policy_pubkey"] = '';
-  policy_metadata["alice_sig_pubkey"] = '';
-  policy_metadata["label"] = trackMetadata["title"];
+// // // Bob Join Policy
+// (async function () {
+//   let url = "https://127.0.0.1:20000/join";
+//   let policy_metadata = {}
+//   policy_metadata["policy_pubkey"] = '';
+//   policy_metadata["alice_sig_pubkey"] = '';
+//   policy_metadata["label"] = trackMetadata["title"];
 
-  console.log("Listener joining policy for track {}", policy_metadata["label"]);
-  const res = await fetch(url, { method: 'POST', body: JSON.stringify(policy_metadata), headers: {'Content-Type': 'application/json'}});
-  const data = res.json();
-  console.log("Policy {} Joined successfully", data);
+//   console.log("Listener joining policy for track {}", policy_metadata["label"]);
+//   const res = await fetch(url, { method: 'POST', body: JSON.stringify(policy_metadata), headers: {'Content-Type': 'application/json'}});
+//   const data = res.json();
+//   console.log("Policy {} Joined successfully", data);
 
-})();
+// })();
 
-// Bob decrypt track segment
-(async function () {
-  let url = "https://127.0.0.1:9000/decrypt";
-  let req = {}
-  req["label"] = trackMetadata["title"];
-  req["ipfsHash"] = ''
+// // // Bob decrypt track segment
+// // (async function () {
+// //   let url = "https://127.0.0.1:20000/decrypt";
+// //   let req = {}
+// //   req["label"] = trackMetadata["title"];
+// //   req["ipfsHash"] = ''
 
-  console.log("Listener fetching track {}", req["ipfsHash"]);
-  const res = await fetch(url, { method: 'POST', body: JSON.stringify(req), headers: {'Content-Type': 'application/json'}});
-  const data = res.json();
-  console.log("Track fetched successfully", data);
+// //   console.log("Listener fetching track {}", req["ipfsHash"]);
+// //   const res = await fetch(url, { method: 'POST', body: JSON.stringify(req), headers: {'Content-Type': 'application/json'}});
+// //   const data = res.json();
+// //   console.log("Track fetched successfully", data);
 
-})();
+// // })();
