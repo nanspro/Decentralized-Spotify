@@ -5,7 +5,7 @@ from flask import request
 
 from flask import Flask
 app = Flask(__name__)
-api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/6001/http')
+api = ipfshttpclient.connect('/dns/local-ipfs-node/tcp/5001/http')
 
 LABEL_TO_POLICY = {}
 PUBKEYS = listener_keys.get_listener_pubkeys()
@@ -19,14 +19,12 @@ def join():
     LABEL_TO_POLICY[label] = policy_metadata
     return label
 
-@app.route('/decrypt', methods = ["POST"])
-def decrypt_track():
-    label = request.json["label"]
-    ipfsHash = request.json["ipfsHash"]
+@app.route('/decrypt/<label>/<ipfsHash>', methods = ["GET"])
+def decrypt_track(label, ipfsHash):
     enc_data = api.get(ipfsHash)
     print("Fetching encrypted track segment from ipfs", enc_data)
     data = listener.reencrypt_segment(enc_data, LABEL_TO_POLICY[label], LISTENER)
     return data
 
 if __name__ == '__main__':
-    app.run(9000)
+    app.run(host='0.0.0.0',port=20000)
