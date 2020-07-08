@@ -127,7 +127,7 @@ def reencrypt_segment(enc_data, policy_metadata, listener):
         verifying_key=data[b'data_source'],
         policy_encrypting_key=policy_pubkey
     )
-    
+    plaintext = None
     try:
         start = timer()
         retrieved_plaintexts = listener.retrieve(
@@ -137,7 +137,6 @@ def reencrypt_segment(enc_data, policy_metadata, listener):
             alice_verifying_key=alices_sig_pubkey
         )
         end = timer()
-
         plaintext = retrieved_plaintexts[0]
 
     except Exception as e:

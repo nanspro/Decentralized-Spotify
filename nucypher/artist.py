@@ -115,8 +115,8 @@ def grant_access_policy(label, bob_pubkeys):
                         m=m,
                         n=n,
                         expiration=policy_end_datetime)
-    print({
+    print(json.dumps({
         "policy_pubkey": policy.public_key.to_bytes().hex(),
         "alice_sig_pubkey": bytes(alicia.stamp).hex(),
-        "label": label,
-    })
+        "label": label.decode(),
+    }))
