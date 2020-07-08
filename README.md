@@ -33,5 +33,22 @@ Upon successful payment for a track to an artist, our creator node will query ra
 
 ## How to run locally
 
+- Install tools: `docker`, `docker-compose`, `node`. 
+- Run npm install in `<audius-protocol>/{libs,contracts,data_contracts}`
+- Link libs. 
+  - In `<audius-protocol>/libs`, run `npm link`.
+  - In `<audius-tooling>/service-commands`, run `npm link @audius/libs`.
+- Set the environement variable `PROTOCOL_DIR` to point to the cloned `protocol` repo.
+- Run the `<service-commands>/scripts/hosts.js` script with `node hosts.js add`. This script will add mappings to your `/etc/hosts` file.
+- In `<service-commands>/scripts/`, run `node setup.js up` to bring all services up.
+- This will start the audius architecture in multiple docker containers all connected to the audius-dev docker network
+- We will now run the `ursulas` in `creator_node_1`, using bash `docker exec -it cn1_creator-node_1 bash`
+- In the shell that opens run ursulas using `nucypher ursula run --dev --federated-only --rest-port 11500 &` and `nucypher ursula run --dev --federated-only --rest-port 11501 --teacher localhost:11500 &`
+- Next we run the listener_server.py which will act as a proxy for us when we decrypt the songs cd into nucypher/listener_server.py and run `python3 server.py`
+
+- With the entire architeture up, you can use the scripts in `<service-commands>/scripts/` to upload and download songs
+
+
+
 ## Challenges we faced
 - Integrating anything with such a large existing app like audius could prove very difficult as we learned along the way. Integrating nuCYpher into the core of audius's cretor node turned to be very cumbersome but we did manage to write new routes and integrate it successfully however that didn't leave much time for us to setup a good ui for the project.
