@@ -13,15 +13,20 @@ from nucypher.characters.lawful import Enrico
 def encrypt_track_segments(policy_pubkey, dir_path):
     data_source = Enrico(policy_encrypting_key=policy_pubkey)
     data_source_public_key = bytes(data_source.stamp)
-    
-    target_path = os.path.join(dir_path.split('/')[:-1])
+    print(dir_path)
+    target_path = "/".join(dir_path.split('/')[:-1])
     target_path = os.path.join(target_path, 'segments_encrypted')
+
+    if not os.path.exists(target_path):
+        try:
+            os.makedirs(target_path)
+        except OSError as exc: # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
 
     track_files = os.scandir(dir_path)
     
     for track_segment in track_files:
-        # path = os.path.join(path_file, track_segment)
-        # print(track_segment)
         with open(track_segment, "rb") as f:
             plaintext = f.read()
 
@@ -32,8 +37,29 @@ def encrypt_track_segments(policy_pubkey, dir_path):
             'track_segment_data': ciphertext.to_bytes(),
             'data_source': data_source_public_key
         }
-        # print(data)
-        with open(target_path + track_segment.name, "wb") as f:
+        
+        with open(os.path.join(target_path, track_segment.name), "wb") as f:
             msgpack.dump(data, f, use_bin_type=True)
+    
+    return True
+
+def encrypt_track(policy_pubkey, file_path):
+    data_source = Enrico(policy_encrypting_key=policy_pubkey)
+    data_source_public_key = bytes(data_source.stamp)
+    print(file_path)
+
+    with open(file_path, "rb") as f:
+        plaintext = f.read()
+
+    ciphertext, signature = data_source.encrypt_message(plaintext)
+    
+    print("Signature", signature)
+    data = {
+        'track_segment_data': ciphertext.to_bytes(),
+        'data_source': data_source_public_key
+    }
+    
+    with open(file_path + '_encrypted', "wb") as f:
+        msgpack.dump(data, f, use_bin_type=True)
     
     return True

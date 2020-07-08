@@ -23,7 +23,7 @@ GlobalLoggerSettings.start_console_logging()
 try:
     SEEDNODE_URI = sys.argv[1]
 except IndexError:
-    SEEDNODE_URI = "172.18.0.14:11500"
+    SEEDNODE_URI = "localhost:11500"
 
 
 def initialize_bob(bob_privkeys):

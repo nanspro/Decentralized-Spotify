@@ -16,10 +16,8 @@ from nucypher.utilities.logging import GlobalLoggerSettings
 # Twisted Logger
 # GlobalLoggerSettings.start_console_logging()
 
-try:
-    SEEDNODE_URI = sys.argv[1]
-except IndexError:
-    SEEDNODE_URI = "localhost:11500"
+SEEDNODE_URI = "localhost:11500"
+TEMP_ALICE_DIR = os.path.join('/', 'tmp', 'alice-tracks')
 
 POLICY_FILENAME = "policy-metadata.json"
 passphrase = "TEST_ALICIA_INSECURE_DEVELOPMENT_PASSWORD"
@@ -51,11 +49,10 @@ def initialize_alice():
     ursula = Ursula.from_seed_and_stake_info(seed_uri=SEEDNODE_URI,
                                          federated_only=True,
                                          minimum_stake=0)
-    TEMP_ALICE_DIR = os.path.join('/', 'tmp', 'alice-tracks')
 
     # If anything fails, let's create Alicia from scratch
     # Remove previous demo files and create new ones
-    # shutil.rmtree(TEMP_ALICE_DIR, ignore_errors=True)
+    shutil.rmtree(TEMP_ALICE_DIR, ignore_errors=True)
     
     alice_config = AliceConfiguration(
         config_root=os.path.join(TEMP_ALICE_DIR),
@@ -82,7 +79,7 @@ def initialize_alice():
     return alicia, alice_config_file
 
 
-def get_policy_pubkey(alicia, label):
+def get_policy_pubkey(label):
     '''
     Alicia can create the public key associated to the policy label,
     even before creating any associated policy
@@ -90,8 +87,8 @@ def get_policy_pubkey(alicia, label):
     alicia = get_alice()
     label = label.encode()
     policy_pubkey = alicia.get_policy_encrypting_key_from_label(label)
-    print("The policy public key for "
-          "label '{}' is {}".format(label.decode("utf-8"), policy_pubkey.to_bytes().hex()))
+    # print("The policy public key for "
+        #   "label '{}' is {}".format(label.decode("utf-8"), policy_pubkey.to_bytes().hex()))
     return policy_pubkey
 
 
