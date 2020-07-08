@@ -1,5 +1,5 @@
 # Audius-NuCypher
-![Video Demo](https://youtu.be/UHpzJ0Nopiohttps://youtu.be/UHpzJ0Nopio)
+[Video Demo](https://youtu.be/UHpzJ0Nopio)
 
 ![Heartbeat Demo](https://user-images.githubusercontent.com/2564234/49080419-dda35680-f243-11e8-90d7-6f649d80e03d.png)
 
