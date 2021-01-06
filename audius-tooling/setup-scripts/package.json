@@ -4,7 +4,7 @@
   "description": "Used to define dependencies used for local service set-up",
   "main": "setupLocal.js",
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "child_process": "^1.0.2",
     "colors": "^1.4.0",
     "convict": "^5.2.0",
