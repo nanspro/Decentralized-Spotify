@@ -13,7 +13,7 @@
     "standardjs": "^1.0.0-alpha"
   },
   "devDependencies": {
-    "mocha": "^7.1.1",
+    "mocha": "^10.2.0",
     "standard": "^14.3.3"
   },
   "scripts": {
