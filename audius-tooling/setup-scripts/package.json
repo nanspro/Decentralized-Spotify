@@ -7,7 +7,7 @@
     "axios": "^0.19.2",
     "child_process": "^1.0.2",
     "colors": "^1.4.0",
-    "convict": "^5.2.0",
+    "convict": "^6.2.4",
     "dotenv": "^8.2.0",
     "path": "^0.12.7",
     "standardjs": "^1.0.0-alpha"
